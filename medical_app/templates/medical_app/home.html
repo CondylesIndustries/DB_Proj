@@ -2,9 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Custom Title Seb Con</title>
+    <title>Home</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f2f2f2;
+        }
+        .portal-container {
+            display: grid;
+            grid-template-columns: repeat(2, 200px);
+            gap: 20px;
+        }
+        .portal {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .portal:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
 <body>
-Say something
+<div class="portal-container">
+    <a href="{% url 'login' portal_type='patient' %}" class="portal">Patient Portal</a>
+    <a href="{% url 'login' portal_type='doctor' %}" class="portal">Doctor Portal</a>
+    <a href="{% url 'login' portal_type='insurancecompany' %}" class="portal">Insurance Company Portal</a>
+    <a href="{% url 'login' portal_type='medicalfacility' %}" class="portal">Medical Facility Portal</a>
+</div>
 </body>
 </html>
