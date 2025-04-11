@@ -62,6 +62,10 @@
     </form>
 </div>
 
+{% if password_mismatch %}
+    <p>Incorrect Password</p>
+{% endif %}
+
 {% if portal_type == "insurancecompany" or portal_type == "medicalfacility" %}
 <script>
     function filterDropdown() {

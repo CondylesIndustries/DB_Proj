@@ -1,45 +1,104 @@
+<!-- Used Chatgpt to beef up the formatting-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>Home - Sebastian & Sebastian</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafb;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            background-color: #f2f2f2;
+            color: #333;
         }
+
+        h1 {
+            margin-top: 2rem;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
         .portal-container {
             display: grid;
-            grid-template-columns: repeat(2, 200px);
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
+            margin-top: 2rem;
+            width: 80%;
+            max-width: 900px;
+            justify-items: center;
         }
+
         .portal {
             background-color: white;
             padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             text-align: center;
             text-decoration: none;
-            color: black;
+            color: #2c3e50;
             font-weight: bold;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+
         .portal:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-message {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .signout-button {
+            margin-top: 1rem;
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s ease;
+        }
+
+        .signout-button:hover {
+            background-color: #c0392b;
         }
     </style>
 </head>
 <body>
-<div class="portal-container">
-    <a href="{% url 'login' portal_type='patient' %}" class="portal">Patient Portal</a>
-    <a href="{% url 'login' portal_type='doctor' %}" class="portal">Doctor Portal</a>
-    <a href="{% url 'login' portal_type='insurancecompany' %}" class="portal">Insurance Company Portal</a>
-    <a href="{% url 'login' portal_type='medicalfacility' %}" class="portal">Medical Facility Portal</a>
-</div>
+    <h1>Sebastian & Sebastian Medical Records</h1>
+
+    {% if patient == -1 and doctor == -1 and insurancecompany == -1 %}
+        <div class="portal-container">
+            <a href="{% url 'login' portal_type='patient' %}" class="portal">Patient Portal</a>
+            <a href="{% url 'login' portal_type='doctor' %}" class="portal">Doctor Portal</a>
+            <a href="{% url 'login' portal_type='insurancecompany' %}" class="portal">Insurance Company Portal</a>
+            <a href="{% url 'login' portal_type='medicalfacility' %}" class="portal">Medical Facility Portal</a>
+            <a href="{% url 'register' %}" class="portal">Create an Account</a>
+        </div>
+    {% else %}
+        <div class="welcome-message">
+            {% if patient != -1 %}
+                <h2>Welcome, {{ welcome }}!</h2>
+            {% endif %}
+            {% if doctor != -1 %}
+                <h2>Welcome, Dr. {{ welcome }}!</h2>
+            {% endif %}
+            {% if insurancecompany != -1 %}
+                <h2>Welcome, {{ welcome }} Inc!</h2>
+            {% endif %}
+            <a href="{% url 'signout' %}" class="signout-button">Sign Out</a>
+        </div>
+    {% endif %}
 </body>
 </html>

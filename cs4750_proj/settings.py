@@ -70,14 +70,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cs4750_proj.wsgi.application'
 
+# Deals with session timeout
+
+SESSION_COOKIE_AGE = 900
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {}
 
+from cs4750_proj import custom_db_credentials as c_db
+
 try:
-    import custom_db_credentials as c_db
+    
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -101,6 +108,8 @@ except:
         }
 
 
+print("DB ENGINE:", 'django.db.backends.postgresql')
+print("DB USER:", c_db.username)
 
 
 # Password validation

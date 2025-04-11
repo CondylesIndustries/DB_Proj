@@ -1,0 +1,139 @@
+<!-- Used Chatgpt to beef up the formatting-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create an Account</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        select {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            margin-bottom: 2rem;
+        }
+
+        .form-section {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 1rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .form-section p {
+            margin-bottom: 1rem;
+        }
+
+        .form-section input,
+        .form-section select {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-top: 0.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-section button {
+            background-color: #007bff;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .form-section button:hover {
+            background-color: #0056b3;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Create an Account</h1>
+
+    <label for="accountType">Select Account Type:</label>
+    <select id="accountType">
+        <option value="">-- Choose One --</option>
+        <option value="patient">Patient</option>
+        <option value="doctor">Doctor</option>
+        <option value="insurancecompany">Insurance Company</option>
+    </select>
+
+    <!-- Patient Form -->
+    <form method="post" id="patientForm" class="form-section">
+        {% csrf_token %}
+        {{ patient_form.as_p }}
+        <button type="submit" name="submit_patient">Create Account</button>
+    </form>
+
+    <!-- Doctor Form -->
+    <form method="post" id="doctorForm" class="form-section">
+        {% csrf_token %}
+        {{ doctor_form.as_p }}
+        <button type="submit" name="submit_doctor">Create Account</button>
+    </form>
+
+    <!-- Insurance Company Form -->
+    <form method="post" id="insuranceForm" class="form-section">
+        {% csrf_token %}
+        {{ insurance_form.as_p }}
+        <button type="submit" name="submit_insurance">Create Account</button>
+    </form>
+
+    <script>
+        const dropdown = document.getElementById("accountType");
+        const forms = {
+            'patient': document.getElementById("patientForm"),
+            'doctor': document.getElementById('doctorForm'),
+            'insurancecompany': document.getElementById('insuranceForm'),
+        };
+
+        dropdown.addEventListener("change", () => {
+            // Hide all forms
+            Object.values(forms).forEach(form => form.style.display = "none");
+
+            const selected = dropdown.value;
+            if (forms[selected]) {
+                forms[selected].style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>
