@@ -172,3 +172,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Keep our credentials getting uploaded
+custom_db_credentials.py

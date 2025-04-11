@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'medical_app',
 ]
 
 MIDDLEWARE = [
@@ -69,16 +70,46 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cs4750_proj.wsgi.application'
 
+# Deals with session timeout
+
+SESSION_COOKIE_AGE = 900
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASES = {}
+
+from cs4750_proj import custom_db_credentials as c_db
+
+try:
+    
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': c_db.username,  # same as the username
+            'USER': c_db.username,
+            'PASSWORD': c_db.password,
+            'HOST': c_db.host_no_http,
+            'PORT': c_db.port,
+        }
     }
-}
+
+except:
+    try: # put heroku custom os variables here
+        pass
+    except:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+
+
+print("DB ENGINE:", 'django.db.backends.postgresql')
+print("DB USER:", c_db.username)
 
 
 # Password validation
