@@ -32,6 +32,14 @@ def home_view(request):
     }
     if html_info['patient'] != -1:
         html_info['welcome'] = selectOne('SELECT first_name FROM patient WHERE patient_id=%s', [html_info['patient']])[0]
+        html_info['medical_visits'] = selectAll('''
+    SELECT mv.date_of_visit, p.procedure_name AS procedure_name, d.last_name AS doctor_name, f.facility_name AS facility_name
+    FROM medicalvisit mv
+    JOIN procedure p ON mv.procedure_id = p.procedure_id
+    JOIN doctor d ON mv.doctor_id = d.doctor_id
+    JOIN medicalfacility f ON mv.facility_id = f.facility_id
+    WHERE mv.patient_id = %s''', [html_info['patient']])
+
     elif html_info['doctor'] != -1:
         html_info['welcome'] = selectOne('SELECT last_name FROM doctor WHERE doctor_id=%s', [html_info['doctor']])[0]
     elif html_info['insurancecompany'] != -1:
@@ -189,6 +197,17 @@ def register_view(request):
         return render(request, "medical_app/register.html", html_info)
 
 
+
+
+def signout(request):
+    request.session['patient'] = -1
+    request.session['doctor'] = -1
+    request.session['insurancecompany'] = -1
+    return HttpResponseRedirect("/")
+
+
+
+
 def custom_query_view(request):
     query = ''
     rows = []
@@ -216,9 +235,3 @@ def custom_query_view(request):
         'rows': rows,
         'error': error
     })
-
-def signout(request):
-    request.session['patient'] = -1
-    request.session['doctor'] = -1
-    request.session['insurancecompany'] = -1
-    return HttpResponseRedirect("/")

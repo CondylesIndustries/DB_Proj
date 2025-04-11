@@ -81,7 +81,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 DATABASES = {}
 
-from cs4750_proj import custom_db_credentials as c_db
+import custom_db_credentials as c_db
 
 try:
     

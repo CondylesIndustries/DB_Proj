@@ -90,6 +90,16 @@
         <div class="welcome-message">
             {% if patient != -1 %}
                 <h2>Welcome, {{ welcome }}!</h2>
+                <ul class="visit-list">
+                    {% for visit in medical_visits %}
+                    <li class="visit-item">
+                        <strong>Date:</strong> {{ visit.0 }}<br>
+                        <strong>Procedure:</strong> {{ visit.1 }}<br>
+                        <strong>Doctor:</strong> {{ visit.2 }}<br>
+                        <strong>Facility:</strong> {{ visit.3 }}
+                    </li>
+                    {% endfor %}
+                </ul>
             {% endif %}
             {% if doctor != -1 %}
                 <h2>Welcome, Dr. {{ welcome }}!</h2>
@@ -97,8 +107,9 @@
             {% if insurancecompany != -1 %}
                 <h2>Welcome, {{ welcome }} Inc!</h2>
             {% endif %}
-            <a href="{% url 'signout' %}" class="signout-button">Sign Out</a>
         </div>
+
+        <a href="{% url 'signout' %}" class="signout-button">Sign Out</a>
     {% endif %}
 </body>
 </html>
