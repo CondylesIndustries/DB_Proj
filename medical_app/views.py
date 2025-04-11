@@ -31,20 +31,75 @@ def home_view(request):
         'insurancecompany': request.session.get('insurancecompany', -1),
     }
     if html_info['patient'] != -1:
-        html_info['welcome'] = selectOne('SELECT first_name FROM patient WHERE patient_id=%s', [html_info['patient']])[0]
-        html_info['medical_visits'] = selectAll('''
-    SELECT mv.date_of_visit, p.procedure_name AS procedure_name, d.last_name AS doctor_name, f.facility_name AS facility_name
-    FROM medicalvisit mv
-    JOIN procedure p ON mv.procedure_id = p.procedure_id
-    JOIN doctor d ON mv.doctor_id = d.doctor_id
-    JOIN medicalfacility f ON mv.facility_id = f.facility_id
-    WHERE mv.patient_id = %s''', [html_info['patient']])
+        html_info['welcome'] = selectOne(
+            'SELECT first_name FROM patient WHERE patient_id=%s', [html_info['patient']]
+        )[0]
 
+        html_info['medical_visits'] = selectAll('''
+            SELECT mv.date_of_visit, p.procedure_name AS procedure_name, d.last_name AS doctor_name, f.facility_name AS facility_name
+            FROM medicalvisit mv
+            JOIN procedure p ON mv.procedure_id = p.procedure_id
+            JOIN doctor d ON mv.doctor_id = d.doctor_id
+            JOIN medicalfacility f ON mv.facility_id = f.facility_id
+            WHERE mv.patient_id = %s
+            ORDER BY mv.date_of_visit DESC
+        ''', [html_info['patient']])
     elif html_info['doctor'] != -1:
-        html_info['welcome'] = selectOne('SELECT last_name FROM doctor WHERE doctor_id=%s', [html_info['doctor']])[0]
+        html_info['welcome'] = selectOne(
+            'SELECT last_name FROM doctor WHERE doctor_id=%s', [html_info['doctor']]
+        )[0]
+        html_info['procedures'] = selectAll('SELECT procedure_id, procedure_name FROM procedure')
+        if request.method == 'POST':
+            patient_email = request.POST.get('patient_email')
+            procedure_id = request.POST.get('procedure_id')
+            date_of_visit = request.POST.get('date_of_visit')
+
+            patient_row = selectOne('SELECT patient_id FROM patient WHERE email = %s', [patient_email])
+            if patient_row:
+                patient_id = patient_row[0]
+                facility_id = selectOne(
+                    'SELECT affiliate_office_id FROM doctor WHERE doctor_id = %s', [html_info['doctor']]
+                )[0]
+                
+                # Adding new medicalvisit object to the patient
+                execute('''
+                    INSERT INTO medicalvisit (
+                        patient_id, doctor_id, procedure_id, facility_id, date_of_visit,
+                        diagnosis_id, visit_reason, bill_amount, insurance_claim, prescription
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ''', [
+                    patient_id,
+                    html_info['doctor'],
+                    procedure_id,
+                    facility_id,
+                    date_of_visit,
+                    1,                      # diagnosis_id: placeholder
+                    'Routine check-up',     
+                    200.0,                  
+                    150.0,                  
+                    'General medication'    
+                ])
+
+
+                html_info['success'] = "Medical visit successfully added!"
+            else:
+                html_info['error'] = "Patient not found."
+        # View the medicalvisit
+        html_info['medical_visits'] = selectAll('''
+            SELECT mv.date_of_visit, p.procedure_name, pt.first_name || ' ' || pt.last_name AS patient_name, f.facility_name
+            FROM medicalvisit mv
+            JOIN procedure p ON mv.procedure_id = p.procedure_id
+            JOIN patient pt ON mv.patient_id = pt.patient_id
+            JOIN medicalfacility f ON mv.facility_id = f.facility_id
+            WHERE mv.doctor_id = %s
+            ORDER BY mv.date_of_visit DESC
+        ''', [html_info['doctor']])
     elif html_info['insurancecompany'] != -1:
-        html_info['welcome'] = selectOne('SELECT company_name FROM insurancecompany WHERE insurance_id=%s', [html_info['insurancecompany']])[0]
-        
+        html_info['welcome'] = selectOne(
+            'SELECT company_name FROM insurancecompany WHERE insurance_id=%s', [html_info['insurancecompany']]
+        )[0]
+
     return render(request, 'medical_app/home.html', html_info)
 
 
